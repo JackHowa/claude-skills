@@ -61,7 +61,11 @@ Work through PRs one at a time. For each PR:
    - **Summary** — what the PR does in 2-3 sentences
    - **Correctness** — logic bugs, edge cases, off-by-ones, unhandled errors
    - **Security** — injection, auth issues, exposed secrets, unsafe inputs
-   - **Performance** — N+1 queries, unnecessary work, missing indexes
+   - **Performance** — N+1 queries, unnecessary work, missing indexes. Flag as [BLOCKER] if any of the following crash-risk issues are present (high bar — do not block on style or minor correctness):
+     - Likely uncaught TypeErrors or null dereferences that would throw and crash a component
+     - Infinite re-render loops — new object/array/function created inline as a `useEffect` or `useMemo` dependency with no memoization, causing it to re-run every render
+     - Default parameter values that are object/array/function expressions (e.g. `prop = []`, `prop = {}`, `prop = new Date()`) passed into a hook dependency array — creates a new reference every render
+     - Memory leaks from event listeners or subscriptions added without a cleanup function
    - **Clarity** — confusing names, missing context, dead code
    - **Nits** — minor style issues (clearly labeled, non-blocking)
 
