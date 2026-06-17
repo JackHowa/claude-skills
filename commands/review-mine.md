@@ -25,6 +25,24 @@ Skip any where `archived` is `true`.
 
 If `$ARGUMENTS` is provided, treat it as a filter: only review PRs whose title or repo name contains the argument (case-insensitive). If empty, review all open PRs found.
 
+## Auto-approve releases
+
+If a PR title starts with `Release/` (case-insensitive), check its CI status:
+
+```bash
+gh pr checks {number} --repo {owner}/{repo}
+```
+
+If all checks pass (or there are no checks), approve it automatically without pausing:
+
+```bash
+gh pr review {number} --repo {owner}/{repo} --approve
+```
+
+Print a one-line confirmation: `✓ Auto-approved release PR #{number} ({title})` and move on.
+
+If any checks are failing, treat it as a normal PR and pause for input.
+
 ## Review each PR — one at a time
 
 Work through PRs one at a time. For each PR:
