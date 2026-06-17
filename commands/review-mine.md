@@ -25,9 +25,9 @@ Skip any where `archived` is `true`.
 
 If `$ARGUMENTS` is provided, treat it as a filter: only review PRs whose title or repo name contains the argument (case-insensitive). If empty, review all open PRs found.
 
-## Review each PR
+## Review each PR — one at a time
 
-For each PR:
+Work through PRs one at a time. For each PR:
 
 1. Fetch the diff:
    ```bash
@@ -49,11 +49,27 @@ For each PR:
 
 ## Output format
 
-For each PR, output:
+Output the review for one PR, then stop and ask:
+> **What would you like to do?** `approve` / `approve with comment` / `request changes` / `comment` / `skip` / `stop`
+
+Wait for the user's response before moving to the next PR.
+
+If the user says `approve`, run:
+```bash
+gh pr review {number} --repo {owner}/{repo} --approve
+```
+
+If the user says `approve with comment` or `comment` or `request changes`, ask for the comment body, then run the appropriate `gh pr review` command with `--body`.
+
+If the user says `skip`, move to the next PR without taking any action.
+
+If the user says `stop`, end the session and summarize what was reviewed.
+
+Format each review as:
 
 ---
 ### [{title}]({url})
-**Repo:** {owner}/{repo} | **Author:** {author} | **Changes:** +{additions} -{deletions}
+**Repo:** {owner}/{repo} | **Author:** {author} | **Changes:** +{additions} -{deletions} | **PR {n} of {total}**
 
 **Summary:** ...
 
