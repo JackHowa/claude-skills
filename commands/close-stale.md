@@ -81,9 +81,10 @@ Once all close candidates are handled, show any **Nudge candidates** (stale but 
 
 ---
 
-If the user says `y`, post:
+If the user says `y`, post a nudge tagging the PR author and any co-authors/contributors by their GitHub login. Do not tag yourself. Tone: direct, no "Hey", no sign-off. Example:
+
 ```bash
-gh pr comment {number} --repo {owner}/{repo} --body "Hey — this PR has been inactive for 30+ days. Is it still in progress, or should it be closed? (Nudge from @me)"
+gh pr comment {number} --repo {owner}/{repo} --body "@{author} Haven't seen activity recently. Is it still in progress, or should it be closed?"
 ```
 
 ## Summary
