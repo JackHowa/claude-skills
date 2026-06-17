@@ -68,20 +68,29 @@ Work through PRs one at a time. For each PR:
 ## Output format
 
 Output the review for one PR, then stop and ask:
-> **What would you like to do?** `approve` / `approve with comment` / `request changes` / `comment` / `skip` / `stop`
+> **What would you like to do?** `a` approve / `ac` approve with comment / `rc` request changes / `c` comment / `s` skip / `q` stop
 
-Wait for the user's response before moving to the next PR.
+Wait for the user's response before moving to the next PR. Accept both the shortcut and the full word.
 
-If the user says `approve`, run:
+| Input | Action |
+|---|---|
+| `a` / `approve` | Approve silently |
+| `ac` / `approve with comment` | Ask for comment body, then approve with it |
+| `rc` / `request changes` | Ask for comment body, then request changes |
+| `c` / `comment` | Ask for comment body, then post a comment |
+| `s` / `skip` | Move to next PR, no action |
+| `q` / `stop` | Summarize and end |
+
+If the user says `a`, run:
 ```bash
 gh pr review {number} --repo {owner}/{repo} --approve
 ```
 
-If the user says `approve with comment` or `comment` or `request changes`, ask for the comment body, then run the appropriate `gh pr review` command with `--body`.
+If the user says `ac`, `rc`, or `c`, ask for the comment body, then run the appropriate `gh pr review` command with `--body`.
 
-If the user says `skip`, move to the next PR without taking any action.
+If the user says `s`, move to the next PR without taking any action.
 
-If the user says `stop`, end the session and summarize what was reviewed.
+If the user says `q`, end the session and summarize what was reviewed.
 
 Format each review as:
 
