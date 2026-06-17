@@ -68,7 +68,7 @@ Work through PRs one at a time. For each PR:
 ## Output format
 
 Output the review for one PR, then stop and ask:
-> **What would you like to do?** `a` approve / `ac` approve with comment / `rc` request changes / `c` comment / `s` skip / `q` stop
+> **What would you like to do?** approve (`a`) / approve with comment (`ac`) / request changes (`rc`) / comment (`c`) / skip (`s`) / stop (`q`)
 
 Wait for the user's response before moving to the next PR. Accept both the shortcut and the full word.
 
