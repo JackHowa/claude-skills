@@ -10,7 +10,7 @@ Find open PRs where I'm requested as a reviewer, fetch the diffs, and produce a 
 ## Find PRs
 
 ```bash
-gh search prs --review-requested=JackHowa --state open --json number,title,url,repository,updatedAt,author --limit 50
+gh search prs --review-requested=@me --state open --json number,title,url,repository,updatedAt,author --limit 50
 ```
 
 Filter out PRs from archived repos:
@@ -27,7 +27,7 @@ If `$ARGUMENTS` is provided, treat it as a filter: only review PRs whose title o
 
 ## Auto-approve releases
 
-If a PR title starts with `Release/` (case-insensitive), check its CI status:
+If a PR title matches common release branch patterns (e.g. `Release/`, `release/`, `v\d`, `deploy/`) — check its CI status:
 
 ```bash
 gh pr checks {number} --repo {owner}/{repo}
