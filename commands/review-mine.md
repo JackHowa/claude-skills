@@ -71,30 +71,34 @@ Work through PRs one at a time. For each PR:
 
 ## Output format
 
-Output the review for one PR, then stop and ask:
-> **What would you like to do?** approve (`a`) / approve with comment (`ac`) / request changes (`rc`) / comment (`c`) / skip (`s`) / stop (`q`)
+Output the review for one PR, then use the `AskUserQuestion` tool to present a single-select choice (no typing required):
 
-Wait for the user's response before moving to the next PR. Accept both the shortcut and the full word.
+```
+question: "What would you like to do with {title}?"
+header: "Action"
+options:
+  - label: "Approve"         description: "Approve the PR silently"
+  - label: "Approve with comment" description: "Approve and add a comment"
+  - label: "Skip"            description: "Move to next PR without action"
+  - label: "Stop"            description: "End session and summarize"
+```
 
-| Input | Action |
-|---|---|
-| `a` / `approve` | Approve silently |
-| `ac` / `approve with comment` | Ask for comment body, then approve with it |
-| `rc` / `request changes` | Ask for comment body, then request changes |
-| `c` / `comment` | Ask for comment body, then post a comment |
-| `s` / `skip` | Move to next PR, no action |
-| `q` / `stop` | Summarize and end |
+Note: `AskUserQuestion` supports max 4 options. Request changes and comment are rare — if needed, the user can type "rc" or "c" as free text and you handle it. Accept typed shortcuts as a fallback at any time.
 
-If the user says `a`, run:
+If the user selects or types `Approve` / `a`, run:
 ```bash
 gh pr review {number} --repo {owner}/{repo} --approve
 ```
 
-If the user says `ac`, `rc`, or `c`, ask for the comment body, then run the appropriate `gh pr review` command with `--body`.
+If the user selects or types `Approve with comment` / `ac`, ask for the comment body, then approve with `--body`.
 
-If the user says `s`, move to the next PR without taking any action.
+If the user types `rc` / `request changes`, ask for the comment body, then request changes.
 
-If the user says `q`, end the session and summarize what was reviewed.
+If the user types `c` / `comment`, ask for the comment body, then post a comment.
+
+If the user selects or types `Skip` / `s`, move to the next PR without taking any action.
+
+If the user selects or types `Stop` / `q`, end the session and summarize what was reviewed.
 
 Format each review as:
 
