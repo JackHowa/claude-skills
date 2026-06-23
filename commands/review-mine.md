@@ -102,7 +102,6 @@ If the user selects or types `Stop` / `q`, end the session and summarize what wa
 
 Format each review as:
 
----
 ### [{title}]({url})
 **Repo:** {owner}/{repo} | **Author:** {author} | **Changes:** +{additions} -{deletions} | **PR {n} of {total}**
 
