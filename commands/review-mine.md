@@ -117,3 +117,39 @@ Format each review as:
 ---
 
 If no PRs are found, say so clearly.
+
+## Follow-up: stale reviews awaiting response
+
+After all PRs have been reviewed (or when the user stops the session), run a follow-up check for open PRs where you left feedback that hasn't been addressed.
+
+```bash
+gh search prs --reviewed-by=@me --state open --json number,title,url,repository,author --limit 50
+```
+
+For each result (skipping archived repos and any PRs already reviewed this session), fetch the review and comment history:
+
+```bash
+gh pr view {number} --repo {owner}/{repo} --json reviews,comments,commits \
+  --jq '{reviewDecision, myLastReview: [.reviews[] | select(.author.login=="{gh_username}")] | last, latestCommit: (.commits | last), comments: .comments}'
+```
+
+Surface a PR only if **all** of the following are true:
+- Your last review is `CHANGES_REQUESTED` or `COMMENTED` (not `APPROVED`)
+- The author has not pushed a new commit **or** replied with a comment since your review
+- The PR has been idle for more than 7 days
+
+For each stale PR, show a one-line summary:
+
+> **[{title}]({url})** *(author, {days} days idle)* — your last action: {state} — "{review body snippet}"
+
+Then ask via `AskUserQuestion`:
+```
+question: "What would you like to do with {title}?"
+options: ["Ping author", "Close PR", "Skip", "Stop"]
+```
+
+If `Ping author`: post a comment — `@{author} Checking in — is this still in progress, or should it be closed?`
+
+If `Close PR`: close with — `Closing due to no activity since {date}. Feel free to reopen if you pick this back up.`
+
+If `Skip` or `Stop`: move on.
