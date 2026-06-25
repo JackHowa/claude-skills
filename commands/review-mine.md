@@ -100,7 +100,7 @@ If the user selects or types `Skip` / `s`, move to the next PR without taking an
 
 If the user selects or types `Stop` / `q`, end the session and summarize what was reviewed.
 
-Format each review as:
+Format each review as below. Do NOT print any `---` horizontal rules (they render as stray `---{title}` frontmatter-like lines in the terminal). Separate reviews with the heading alone — no leading or trailing rule.
 
 ### [{title}]({url})
 **Repo:** {owner}/{repo} | **Author:** {author} | **Changes:** +{additions} -{deletions} | **PR {n} of {total}**
@@ -113,8 +113,6 @@ Format each review as:
 - [NIT] ...
 
 **Verdict:** `APPROVE` / `REQUEST CHANGES` / `COMMENT`
-
----
 
 If no PRs are found, say so clearly.
 
