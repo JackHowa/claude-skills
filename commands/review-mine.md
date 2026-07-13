@@ -108,13 +108,23 @@ Format each review as below. Do NOT print any `---` horizontal rules (they rende
 **Summary:** ...
 
 **Findings:**
-- [BLOCKER] ...
-- [SUGGESTION] ...
-- [NIT] ...
+a. [BLOCKER] ...
+b. [SUGGESTION] ...
+c. [NIT] ...
 
 **Verdict:** `APPROVE` / `REQUEST CHANGES` / `COMMENT`
 
+Letter findings (a, b, c...), never number or bullet them — numbers collide with PR-selection numbering when the user references a finding while multiple PRs are in play. When the user references a letter later (e.g. "note b in the comment", "approve with comments from a and c"), map it back to that finding's text.
+
+For large/complex PRs, keep findings to a short list of the most important issues rather than an exhaustive enumeration — favor a clear, digestible breakdown over completeness.
+
 If no PRs are found, say so clearly.
+
+## Learning the user's review style
+
+This is a standing goal across sessions, not a one-time step: build up a picture of how the user actually reviews PRs — what they approve outright, what they insist on commenting/blocking on, and what they let slide as non-blocking.
+
+Whenever the user takes an action that reveals a preference (approves despite a flagged finding, insists on a specific comment, requests changes, skips a PR, or corrects how you presented something), save a short memory capturing what mattered to them and why (if stated) — following the memory system's `feedback` type conventions (rule, **Why:**, **How to apply:**). Don't wait until the end of the session to do this — capture it in the moment, right after the decision.
 
 ## Follow-up: stale reviews awaiting response
 
