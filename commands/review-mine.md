@@ -105,6 +105,8 @@ Format each review as below. Do NOT print any `---` horizontal rules (they rende
 ### [{title}]({url})
 **Repo:** {owner}/{repo} | **Author:** {author} | **Changes:** +{additions} -{deletions} | **PR {n} of {total}**
 
+Before using the `[{title}]({url})` heading, HTML-escape any raw angle brackets in `{title}` (e.g. a PR titled `...after_clone_<table>...` must render as `after_clone_&lt;table&gt;`). An unescaped `<word>` inside markdown link text breaks out of the `[...]()` syntax in some renderers and can swallow the rest of the message into what looks like one giant link. This applies to every title in the session, not just the first one.
+
 **Summary:** ...
 
 **Findings:**
