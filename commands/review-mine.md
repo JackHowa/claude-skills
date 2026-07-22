@@ -124,6 +124,18 @@ This is a standing goal across sessions, not a one-time step: build up a picture
 
 Whenever the user takes an action that reveals a preference (approves despite a flagged finding, insists on a specific comment, requests changes, skips a PR, or corrects how you presented something), save a short memory capturing what mattered to them and why (if stated) — following the memory system's `feedback` type conventions (rule, **Why:**, **How to apply:**). Don't wait until the end of the session to do this — capture it in the moment, right after the decision.
 
+### Learned review bar (defaults observed from past sessions)
+
+These are durable defaults distilled from the user's actual review decisions — apply them, but keep refining as new sessions reveal exceptions:
+
+- **Aggregate/release-style PRs** (a cut that bundles several already-individually-reviewed commits into another branch): light touch. Verify CI is green and skim the bundled list; don't re-review the underlying diffs line-by-line. Approve unless CI is failing.
+- **Dependency-bump-only PRs** (no consumer code changes, just a version bump): approve readily. A failing visual-regression/screenshot-diff check on this kind of PR is worth a one-line note (it's routine for a version bump to shift a few pixels) but isn't by itself a reason to withhold approval — flag it, don't block on it.
+- **Real logic/architecture problems in substantive code are a hard blocker even when CI is green.** CI passing doesn't validate a design choice CI can't check (e.g. two implementations of the same concept behaving subtly differently). Conversely, when CI is legitimately red on substantive (non-doc, non-bump) code, don't approve blind — hold at a non-approving verdict until it's resolved or you understand why.
+- **Defer to a teammate's already-posted substantive review when it's more thorough than your own pass.** Read it, verify its claims against the diff rather than rubber-stamping either the PR or the teammate's take, and if it holds up, write agreement concisely rather than re-deriving the same analysis from scratch.
+- **Stray/unrelated changes** (leftover debug code, an accidental unrelated file edit, a hardcoded test value) are comment-worthy nits, not blockers on their own — approve with a comment calling them out rather than blocking merge over them.
+- **Comment tone: terse and friendly.** No filler, no hedging, no restating the obvious back to the author.
+- **Never guess at an unresolved CI failure's root cause without evidence.** If you can't reach the actual logs/output, say so plainly instead of presenting a guess as a diagnosis.
+
 ## Follow-up: stale reviews awaiting response
 
 After all PRs have been reviewed (or when the user stops the session), run a follow-up check for open PRs where you left feedback that hasn't been addressed.
