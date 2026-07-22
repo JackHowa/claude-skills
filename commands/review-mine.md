@@ -124,10 +124,12 @@ This is a standing goal across sessions, not a one-time step: build up a picture
 
 Whenever the user takes an action that reveals a preference (approves despite a flagged finding, insists on a specific comment, requests changes, skips a PR, or corrects how you presented something), save a short memory capturing what mattered to them and why (if stated) — following the memory system's `feedback` type conventions (rule, **Why:**, **How to apply:**). Don't wait until the end of the session to do this — capture it in the moment, right after the decision.
 
-### Learned review bar (defaults observed from past sessions)
+### Learned review bar (living document — always updating)
 
-These are durable defaults distilled from the user's actual review decisions — apply them, but keep refining as new sessions reveal exceptions:
+This list is never final. It's distilled from the user's actual review decisions so far, not a fixed policy — apply these defaults, but treat every session as a chance to add to, sharpen, or correct them:
 
+- **After any session with review decisions, re-derive this list from the accumulated `feedback` memories** (see "Learning the user's review style" above) and update the bullets below in this file — add a new one when a pattern is confirmed, tighten an existing one when a session reveals a sharper distinction or an exception, and remove one if the user contradicts it. Do this as part of wrapping up the session, not as a separate manual step someone has to remember to run.
+- Keep every bullet generalized — no company, tool, repo, or person names. If a pattern only makes sense with specifics, generalize the shape of it (e.g. "a CI check that's expected to be noisy for this kind of change" rather than naming the actual check).
 - **Aggregate/release-style PRs** (a cut that bundles several already-individually-reviewed commits into another branch): light touch. Verify CI is green and skim the bundled list; don't re-review the underlying diffs line-by-line. Approve unless CI is failing.
 - **Dependency-bump-only PRs** (no consumer code changes, just a version bump): approve readily. A failing visual-regression/screenshot-diff check on this kind of PR is worth a one-line note (it's routine for a version bump to shift a few pixels) but isn't by itself a reason to withhold approval — flag it, don't block on it.
 - **Real logic/architecture problems in substantive code are a hard blocker even when CI is green.** CI passing doesn't validate a design choice CI can't check (e.g. two implementations of the same concept behaving subtly differently). Conversely, when CI is legitimately red on substantive (non-doc, non-bump) code, don't approve blind — hold at a non-approving verdict until it's resolved or you understand why.
