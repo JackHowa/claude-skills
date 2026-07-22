@@ -35,21 +35,18 @@ Jack's external auto-approve routine for release-branch PRs (titles like `Releas
 
 If Jack confirms the external routine is back, ask whether to restore the old skip/auto-approve behavior.
 
-## Review each PR — one at a time
+## Generate reviews in parallel
 
-Work through PRs one at a time. For each PR:
+Once the PR list is finalized (archived repos filtered out), draft every review concurrently instead of one at a time: spawn one `Explore` agent per remaining PR, all in a single message so they run in parallel. Give each agent:
 
-1. Fetch the diff:
-   ```bash
-   gh pr diff {number} --repo {owner}/{repo}
-   ```
+- the PR's `number`, `repo`, and `title`
+- instructions to fetch the diff (`gh pr diff {number} --repo {owner}/{repo}`), PR metadata (`gh pr view {number} --repo {owner}/{repo} --json title,body,author,additions,deletions,changedFiles,commits`), and CI status (`gh pr checks {number} --repo {owner}/{repo}`)
+- the release-PR lighter-treatment instructions above, if titled like a release cut
+- the full review checklist below (Correctness/Security/Performance/Clarity/Nits) and the exact `Output format` further down, so the agent's final text *is* the finished, ready-to-post review for that PR
 
-2. Fetch PR description and metadata:
-   ```bash
-   gh pr view {number} --repo {owner}/{repo} --json title,body,author,additions,deletions,changedFiles,commits
-   ```
+Wait for all agents to return before presenting anything. This only parallelizes the drafting — decisions still happen one at a time (see "Present each PR" below); nothing gets posted to GitHub until you weigh in on that specific PR.
 
-3. Read the diff carefully and produce a review covering:
+Each agent should produce a review covering:
    - **Summary** — what the PR does in 2-3 sentences
    - **Correctness** — logic bugs, edge cases, off-by-ones, unhandled errors
    - **Security** — injection, auth issues, exposed secrets, unsafe inputs
@@ -60,6 +57,10 @@ Work through PRs one at a time. For each PR:
      - Memory leaks from event listeners or subscriptions added without a cleanup function
    - **Clarity** — confusing names, missing context, dead code
    - **Nits** — minor style issues (clearly labeled, non-blocking)
+
+## Present each PR — one at a time
+
+Once every agent has returned, walk through the PRs in the original order. For each one, output the agent's finished review verbatim (re-checking it briefly against the diff if it looks thin, contradicts the PR description, or the verdict seems off — don't blindly relay a weak agent output), then use the `AskUserQuestion` tool to present a single-select choice before moving to the next PR. This decision step is sequential regardless of how the reviews were generated — only one PR is ever being approved/commented/skipped at a time.
 
 ## Output format
 
