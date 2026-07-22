@@ -35,21 +35,18 @@ Jack's external auto-approve routine for release-branch PRs (titles like `Releas
 
 If Jack confirms the external routine is back, ask whether to restore the old skip/auto-approve behavior.
 
-## Review each PR — one at a time
+## Generate reviews in parallel
 
-Work through PRs one at a time. For each PR:
+Once the PR list is finalized (archived repos filtered out), draft every review concurrently instead of one at a time: spawn one `Explore` agent per remaining PR, all in a single message so they run in parallel. Give each agent:
 
-1. Fetch the diff:
-   ```bash
-   gh pr diff {number} --repo {owner}/{repo}
-   ```
+- the PR's `number`, `repo`, and `title`
+- instructions to fetch the diff (`gh pr diff {number} --repo {owner}/{repo}`), PR metadata (`gh pr view {number} --repo {owner}/{repo} --json title,body,author,additions,deletions,changedFiles,commits`), and CI status (`gh pr checks {number} --repo {owner}/{repo}`)
+- the release-PR lighter-treatment instructions above, if titled like a release cut
+- the full review checklist below (Correctness/Security/Performance/Clarity/Nits) and the exact `Output format` further down, so the agent's final text *is* the finished, ready-to-post review for that PR
 
-2. Fetch PR description and metadata:
-   ```bash
-   gh pr view {number} --repo {owner}/{repo} --json title,body,author,additions,deletions,changedFiles,commits
-   ```
+Wait for all agents to return before presenting anything. This only parallelizes the drafting — decisions still happen one at a time (see "Present each PR" below); nothing gets posted to GitHub until you weigh in on that specific PR.
 
-3. Read the diff carefully and produce a review covering:
+Each agent should produce a review covering:
    - **Summary** — what the PR does in 2-3 sentences
    - **Correctness** — logic bugs, edge cases, off-by-ones, unhandled errors
    - **Security** — injection, auth issues, exposed secrets, unsafe inputs
@@ -60,6 +57,10 @@ Work through PRs one at a time. For each PR:
      - Memory leaks from event listeners or subscriptions added without a cleanup function
    - **Clarity** — confusing names, missing context, dead code
    - **Nits** — minor style issues (clearly labeled, non-blocking)
+
+## Present each PR — one at a time
+
+Once every agent has returned, walk through the PRs in the original order. For each one, output the agent's finished review verbatim (re-checking it briefly against the diff if it looks thin, contradicts the PR description, or the verdict seems off — don't blindly relay a weak agent output), then use the `AskUserQuestion` tool to present a single-select choice before moving to the next PR. This decision step is sequential regardless of how the reviews were generated — only one PR is ever being approved/commented/skipped at a time.
 
 ## Output format
 
@@ -122,6 +123,20 @@ If no PRs are found, say so clearly.
 This is a standing goal across sessions, not a one-time step: build up a picture of how the user actually reviews PRs — what they approve outright, what they insist on commenting/blocking on, and what they let slide as non-blocking.
 
 Whenever the user takes an action that reveals a preference (approves despite a flagged finding, insists on a specific comment, requests changes, skips a PR, or corrects how you presented something), save a short memory capturing what mattered to them and why (if stated) — following the memory system's `feedback` type conventions (rule, **Why:**, **How to apply:**). Don't wait until the end of the session to do this — capture it in the moment, right after the decision.
+
+### Learned review bar (living document — always updating)
+
+This list is never final. It's distilled from the user's actual review decisions so far, not a fixed policy — apply these defaults, but treat every session as a chance to add to, sharpen, or correct them:
+
+- **After each individual review decision** (not batched at session end), check whether it confirms, sharpens, or contradicts a bullet below, and update this file's bullets in the same turn if so — add a new one when a pattern is confirmed, tighten an existing one when the decision reveals a sharper distinction or an exception, and remove/correct one if the user contradicts it. This runs alongside (not instead of) saving the underlying `feedback` memory (see "Learning the user's review style" above) — the memory records the specific incident, this list is the standing summary.
+- Keep every bullet generalized — no company, tool, repo, or person names. If a pattern only makes sense with specifics, generalize the shape of it (e.g. "a CI check that's expected to be noisy for this kind of change" rather than naming the actual check).
+- **Aggregate/release-style PRs** (a cut that bundles several already-individually-reviewed commits into another branch): light touch. Verify CI is green and skim the bundled list; don't re-review the underlying diffs line-by-line. Approve unless CI is failing.
+- **Dependency-bump-only PRs** (no consumer code changes, just a version bump): approve readily. A failing visual-regression/screenshot-diff check on this kind of PR is worth a one-line note (it's routine for a version bump to shift a few pixels) but isn't by itself a reason to withhold approval — flag it, don't block on it.
+- **Real logic/architecture problems in substantive code are a hard blocker even when CI is green.** CI passing doesn't validate a design choice CI can't check (e.g. two implementations of the same concept behaving subtly differently). Conversely, when CI is legitimately red on substantive (non-doc, non-bump) code, don't approve blind — hold at a non-approving verdict until it's resolved or you understand why.
+- **Defer to a teammate's already-posted substantive review when it's more thorough than your own pass.** Read it, verify its claims against the diff rather than rubber-stamping either the PR or the teammate's take, and if it holds up, write agreement concisely rather than re-deriving the same analysis from scratch.
+- **Stray/unrelated changes** (leftover debug code, an accidental unrelated file edit, a hardcoded test value) are comment-worthy nits, not blockers on their own — approve with a comment calling them out rather than blocking merge over them.
+- **Comment tone: terse and friendly.** No filler, no hedging, no restating the obvious back to the author.
+- **Never guess at an unresolved CI failure's root cause without evidence.** If you can't reach the actual logs/output, say so plainly instead of presenting a guess as a diagnosis.
 
 ## Follow-up: stale reviews awaiting response
 
