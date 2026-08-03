@@ -27,13 +27,16 @@ If `$ARGUMENTS` is provided, treat it as a filter: only review PRs whose title o
 
 ## Release PRs
 
-Jack's external auto-approve routine for release-branch PRs (titles like `Release/`, `release/`, `v\d`, `deploy/`) is currently down — do NOT skip these and do NOT silently auto-approve them. Review them like any other PR, but lighter: they're typically an aggregate cut bundling several already-individually-reviewed feature PRs from `develop` into `main` (or similar), so a fresh line-by-line re-review of the bundled diff usually isn't warranted. Instead:
+Jack's external auto-approve routine for release-branch PRs is down for good (structurally can't submit real GitHub approvals — see egress proxy constraint), so this skill is the permanent home for release-PR review. Don't skip these. Review them like any other PR, but lighter: they're typically an aggregate cut bundling several already-individually-reviewed feature PRs from `develop` into `main` (or similar), so a fresh line-by-line re-review of the bundled diff usually isn't warranted. Instead:
 
 - Note in the summary that it's a release cut and list the bundled tickets/PRs (from the PR body).
 - Check CI status (`gh pr checks {number} --repo {owner}/{repo}`) and surface any failing checks as a finding — don't wave them through unexamined.
-- Still go through the normal `AskUserQuestion` action flow below — do not auto-approve without asking.
 
-If Jack confirms the external routine is back, ask whether to restore the old skip/auto-approve behavior.
+**Auto-approve release PRs when findings check out** — i.e. CI is green and there are no 🔴 [BLOCKER] findings. Still print the full review (summary + findings + verdict) so Jack can see what was checked, then run the approval immediately:
+```bash
+gh pr review {number} --repo {owner}/{repo} --approve
+```
+Skip the `AskUserQuestion` step for these — move straight to the next PR. If CI is red or a blocker is found, do NOT auto-approve — fall back to the normal `AskUserQuestion` flow instead.
 
 ## Generate reviews in parallel
 
