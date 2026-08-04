@@ -45,6 +45,7 @@ Once the PR list is finalized (archived repos filtered out), draft every review 
 - the PR's `number`, `repo`, and `title`
 - instructions to fetch the diff (`gh pr diff {number} --repo {owner}/{repo}`), PR metadata (`gh pr view {number} --repo {owner}/{repo} --json title,body,author,additions,deletions,changedFiles,commits`), and CI status (`gh pr checks {number} --repo {owner}/{repo}`)
 - the release-PR lighter-treatment instructions above, if titled like a release cut
+- **if the diff touches React/Next.js code** (`.tsx`/`.jsx` files, or hooks/components in a known frontend repo like `workbench-ui-v2`/`ember-ui`): instruct the agent to load the `vercel:react-best-practices` skill and apply it as a real checklist — not just a vibe check. Cite specific rule names (e.g. `rerender-derived-state-no-effect`, `rerender-no-inline-components`, `async-parallel`) in findings where they apply, especially around hook dependency arrays, derived state, request waterfalls, and null-safety on fetched data. Skip this for non-React PRs (backend, infra, docs).
 - the full review checklist below (Correctness/Security/Performance/Clarity/Nits) and the exact `Output format` further down, so the agent's final text *is* the finished, ready-to-post review for that PR
 
 Wait for all agents to return before presenting anything. This only parallelizes the drafting — decisions still happen one at a time (see "Present each PR" below); nothing gets posted to GitHub until you weigh in on that specific PR.
