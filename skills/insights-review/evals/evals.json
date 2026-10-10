@@ -1,0 +1,36 @@
+{
+  "skill_name": "insights-review",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "has-baseline-recurring-friction",
+      "prompt": "I already have an /insights report from today. For this test, treat /Users/jackhoward/conductor/workspaces/claude-skills/yaounde/insights-review-workspace/iteration-1/sandbox/claude.md as my global CLAUDE.md (edit it there, not at ~/.claude/CLAUDE.md), and treat /Users/jackhoward/conductor/workspaces/claude-skills/yaounde/insights-review-workspace/iteration-1/sandbox/memory/ as my memory directory (read/write baseline files there, not the real memory dir). The current report's friction_analysis is at /Users/jackhoward/conductor/workspaces/claude-skills/yaounde/insights-review-workspace/iteration-1/sandbox/report-current.json — use that instead of running /insights live. Now: compare this against my last baseline and tell me what's recurring, and propose CLAUDE.md updates. For each proposal, just tell me your recommendation and apply it — I trust your judgment, don't wait for me to say yes/no for this test run.",
+      "expected_output": "Diffs current friction categories against the sandbox's 2026-07-22 baseline, correctly identifies that the pronoun issue is already covered by an existing CLAUDE.md line (no duplicate proposed), proposes new additions for the Jira project-key/label convention and the masked-exit-code verification gap (genuinely uncovered), and does NOT re-propose reviewer-timing since that line was already added. Ends by writing a fresh baseline memory file to the sandbox memory dir with today's date, and does not touch the real ~/.claude/CLAUDE.md or real memory directory.",
+      "files": [],
+      "assertions": [
+        "Reads the existing baseline memory file before proposing anything",
+        "Does NOT propose a duplicate pronoun rule (already covered)",
+        "Does NOT re-propose the reviewer-timing line (already added)",
+        "Proposes a new addition for the Jira project-key/label convention",
+        "Proposes a new addition for the masked-exit-code verification gap",
+        "Edits only land in the sandbox claude.md, not the real ~/.claude/CLAUDE.md",
+        "Writes a new dated baseline memory file to the sandbox memory dir"
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "no-baseline-first-run",
+      "prompt": "For this test, treat /Users/jackhoward/conductor/workspaces/claude-skills/yaounde/insights-review-workspace/iteration-1/sandbox-nobaseline/claude.md as my global CLAUDE.md (edit it there, not at ~/.claude/CLAUDE.md), and treat /Users/jackhoward/conductor/workspaces/claude-skills/yaounde/insights-review-workspace/iteration-1/sandbox-nobaseline/memory/ as my memory directory. The current report's friction_analysis is at /Users/jackhoward/conductor/workspaces/claude-skills/yaounde/insights-review-workspace/iteration-1/sandbox-nobaseline/report-current.json — use that instead of running /insights live. There's no prior baseline saved yet. Walk me through what you'd propose for CLAUDE.md and apply what makes sense — go ahead and use your judgment, don't wait for my approval on each one for this test run.",
+      "expected_output": "Notices there's no existing baseline, says so, and still proposes structural CLAUDE.md additions for the two incidents with real recurrence/severity (force-pushing shared branches happened twice, prod deploy without green staging is high-severity even once) while treating the truly one-off undocumented-internal-API incident as not worth a standing rule (or flags it as borderline rather than silently adding it). Ends by writing a first baseline memory file to the sandbox-nobaseline memory dir.",
+      "files": [],
+      "assertions": [
+        "Explicitly notices and states that no baseline exists yet",
+        "Proposes a standing rule for force-pushing shared branches (recurred twice in the report)",
+        "Proposes a standing rule for prod deploy without green staging (high severity)",
+        "Does NOT bake the one-off undocumented-internal-API incident into a hard standing rule",
+        "Writes a first baseline memory file to the sandbox-nobaseline memory dir",
+        "Edits only land in the sandbox-nobaseline claude.md, not the real ~/.claude/CLAUDE.md"
+      ]
+    }
+  ]
+}
